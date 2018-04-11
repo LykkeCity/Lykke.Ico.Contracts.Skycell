@@ -1,0 +1,1 @@
+# Lykke.Ico.Contracts.Skycell
