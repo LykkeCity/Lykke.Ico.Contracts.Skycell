@@ -1,7 +1,7 @@
 pragma solidity ^0.4.21;
 
 /*
- *  To simplify flow and deploying process we don't use MiniMe Controller functionality,
+ *  To simplify flow and deploying process we don't use MiniMe controller approach,
  *  instead we extend it through inheritance.
  *
  *  See https://github.com/Giveth/minime for details of MiniMe.
