@@ -7,16 +7,17 @@ pragma solidity ^0.4.21;
  *  See https://github.com/Giveth/minime for details of MiniMe.
  */
 
-import "./MiniMeToken.sol";
+import "./ERC677.sol";
 
 /**
  * @title Smart Containers LOGI token contract 
  */
-contract LogiToken is MiniMeToken {
+contract LogiToken is ERC677 {
+
     /**
-     * @dev Logi constructor just parametrizes the MiniMeToken constructor
+     * @dev Logi constructor just parametrizes the ERC677 -> MiniMeToken constructor
      */
-    function LogiToken() public MiniMeToken(
+    function LogiToken() public ERC677(
         new MiniMeTokenFactory(), // no external token factory
         0x0,                      // no parent token
         0,                        // no parent token - no snapshot block number

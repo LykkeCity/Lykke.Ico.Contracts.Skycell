@@ -14,13 +14,13 @@ pragma solidity ^0.4.21;
  * Such an approach is intended to increase security and investor confidence.
  */
 
-import "./MiniMeToken.sol";
+import "./ERC677.sol";
 import "./Ownable.sol";
 
 /**
  * @title Smart Containers SMARC token contract 
  */
-contract SmarcToken is MiniMeToken, Ownable {
+contract SmarcToken is ERC677, Ownable {
 
     // mapping for locking certain addresses
     mapping(address => uint256) lockups;
@@ -29,9 +29,9 @@ contract SmarcToken is MiniMeToken, Ownable {
     address public burnable;
 
     /**
-     * @dev Smarc constructor just parametrizes the MiniMeToken constructor
+     * @dev Smarc constructor just parametrizes the ERC677 -> MiniMeToken constructor
      */
-    function SmarcToken() public MiniMeToken(
+    function SmarcToken() public ERC677(
         new MiniMeTokenFactory(), // no external token factory
         0x0,                      // no parent token
         0,                        // no parent token - no snapshot block number
