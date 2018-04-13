@@ -36,6 +36,9 @@ Or you can run tests on develop network without pre-launching:
 
 ```truffle test```
 
-If you meet *out of gas* issues while testing with ```truffle develop``` or ```truffle test``` then it's recommended to switch to external client (consider [Ganache](truffleframework.com/ganache/)) instead of built-in one. You should increase default gas limit to something greater than or equal to 7125000, which is an approximate price of deploying SMARC contract (LOGI is a bit simpler and cheaper).
+If you meet *out of gas* issues while testing with ```truffle develop``` or ```truffle test``` then it's recommended
+to switch to external client (consider [Ganache](truffleframework.com/ganache/)) instead of built-in one. You should
+increase default gas limit to something greater than or equal to 7125000, which is an approximate price of deploying
+SMARC contract (LOGI is a bit simpler and cheaper).
 
 See [documentation](http://truffleframework.com/docs/) for further scenarios.

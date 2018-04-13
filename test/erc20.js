@@ -2,6 +2,8 @@
  * This is adopted to MiniMe version of https://github.com/CryptoverseRocks/token-test-suite
  */
 
+const toBigNumber = require("./helpers.js").toBigNumber;
+const expectRevertOrFail = require("./helpers.js").expectRevertOrFail;
 const expect = require('chai')
     .use(require('chai-bignumber')(web3.BigNumber))
     .expect;
@@ -112,8 +114,8 @@ module.exports = function(options) {
         });
 
         describe('allowance(_owner, _spender)', function() {
-            describeIt(when('_owner != _spender'), alice, bob);
-            describeIt(when('_owner == _spender'), alice, alice);
+            describeIt('when(_owner != _spender)', alice, bob);
+            describeIt('when(_owner == _spender)', alice, alice);
 
             it('should have correct initial allowance', async function() {
                 for (var i = 0; i < initialAllowances.length; i++) {
@@ -151,8 +153,8 @@ module.exports = function(options) {
         });
 
         describe('approve(_spender, _value)', function() {
-            describeIt(when('_spender != sender'), alice, bob);
-            describeIt(when('_spender == sender'), alice, alice);
+            describeIt('when(_spender != sender)', alice, bob);
+            describeIt('when(_spender == sender)', alice, alice);
 
             function describeIt(name, from, to) {
                 describe(name, function() {
@@ -212,8 +214,8 @@ module.exports = function(options) {
         });
 
         describe('transfer(_to, _value)', function() {
-            describeIt(when('_to != sender'), alice, bob);
-            describeIt(when('_to == sender'), alice, alice);
+            describeIt('when(_to != sender)', alice, bob);
+            describeIt('when(_to == sender)', alice, alice);
 
             function describeIt(name, from, to) {
                 describe(name, function() {
@@ -303,10 +305,10 @@ module.exports = function(options) {
         });
 
         describe('transferFrom(_from, _to, _value)', function() {
-            describeIt(when('_from != _to and _to != sender'), alice, bob, charles);
-            describeIt(when('_from != _to and _to == sender'), alice, bob, bob);
-            describeIt(when('_from == _to and _to != sender'), alice, alice, bob);
-            describeIt(when('_from == _to and _to == sender'), alice, alice, alice);
+            describeIt('when(_from != _to and _to != sender)', alice, bob, charles);
+            describeIt('when(_from != _to and _to == sender)', alice, bob, bob);
+            describeIt('when(_from == _to and _to != sender)', alice, alice, bob);
+            describeIt('when(_from == _to and _to == sender)', alice, alice, alice);
 
             it('should revert when trying to transfer while not allowed at all', async function() {
                 await credit(alice, tokens(3));
@@ -449,71 +451,4 @@ module.exports = function(options) {
             }
         });
     });
-}
-
-/**
-* Formats the describe-case name.
-* @param {string} name
-*/
-function when(name) {
-    return 'when (' + name + ')';
-}
-
-/**
- * Converts given value to BigNumber object if it is number or string. Otherwise defaultValue is
- * returned in case given value is not truthy.
- *
- * @param {number|string|BigNumber|null} number
- * @param {number|string|BigNumber|null} [defaultValue]
- * @returns {BigNumber|null}
- */
-function toBigNumber(number) {
-    var defaultValue = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-
-    if (typeof number === 'string' || typeof number === 'number') {
-        return new web3.BigNumber(number);
-    } else if (number) {
-        return number;
-    } else if (defaultValue == null) {
-        return null;
-    } else {
-        return new web3.BigNumber(defaultValue);
-    }
-}
-
-/**
- * Asserts that given promise will throw because of revert().
- * @param {Promise} promise
- */
-async function expectRevert(promise) {
-    await expectError(promise, ['revert']);
-}
-
-/**
- * Asserts that given promise will throw because of revert() or failed assertion.
- * @param {Promise} promise
- */
-async function expectRevertOrFail(promise) {
-    await expectError(promise, ['revert', 'invalid opcode']);
-}
-
-/**
- * Asserts that given promise will throw and that thrown message will contain one of the given
- * search strings.
- *
- * @param {Promise} promise The promise expecting to throw.
- * @param {string[]} messages List of expected thrown message search strings.
- */
-async function expectError(promise, messages) {
-    try {
-        await promise;
-    } catch (error) {
-        for (var i = 0; i < messages.length; i++) {
-            if (error.message.search(messages[i]) >= 0) {
-                return;
-            }
-        }
-        assert.fail("Expected revert, got '" + error + "' instead.");
-    }
-    assert.fail('Expected revert not received.');
 }
