@@ -32,7 +32,6 @@ contract SmarcToken is ERC677, Ownable {
      * @dev Smarc constructor just parametrizes the ERC677 -> MiniMeToken constructor
      */
     function SmarcToken() public ERC677(
-        new MiniMeTokenFactory(), // no external token factory
         0x0,                      // no parent token
         0,                        // no parent token - no snapshot block number
         "SmarcToken",             // Token name

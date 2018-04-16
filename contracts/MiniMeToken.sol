@@ -80,17 +80,11 @@ contract MiniMeToken is Controlled {
     // Flag that determines if the token is transferable or not.
     bool public transfersEnabled;
 
-    // The factory used to create new clone tokens
-    MiniMeTokenFactory public tokenFactory;
-
 ////////////////
 // Constructor
 ////////////////
 
     /// @notice Constructor to create a MiniMeToken
-    /// @param _tokenFactory The address of the MiniMeTokenFactory contract that
-    ///  will create the Clone token contracts, the token factory needs to be
-    ///  deployed first
     /// @param _parentToken Address of the parent token, set to 0x0 if it is a
     ///  new token
     /// @param _parentSnapShotBlock Block of the parent token that will
@@ -101,7 +95,6 @@ contract MiniMeToken is Controlled {
     /// @param _tokenSymbol Token Symbol for the new token
     /// @param _transfersEnabled If true, tokens will be able to be transferred
     function MiniMeToken(
-        address _tokenFactory,
         address _parentToken,
         uint _parentSnapShotBlock,
         string _tokenName,
@@ -109,7 +102,6 @@ contract MiniMeToken is Controlled {
         string _tokenSymbol,
         bool _transfersEnabled
     ) public {
-        tokenFactory = MiniMeTokenFactory(_tokenFactory);
         name = _tokenName;                                 // Set the name
         decimals = _decimalUnits;                          // Set the decimals
         symbol = _tokenSymbol;                             // Set the symbol
@@ -328,44 +320,6 @@ contract MiniMeToken is Controlled {
     }
 
 ////////////////
-// Clone Token Method
-////////////////
-
-    /// @notice Creates a new clone token with the initial distribution being
-    ///  this token at `_snapshotBlock`
-    /// @param _cloneTokenName Name of the clone token
-    /// @param _cloneDecimalUnits Number of decimals of the smallest unit
-    /// @param _cloneTokenSymbol Symbol of the clone token
-    /// @param _snapshotBlock Block when the distribution of the parent token is
-    ///  copied to set the initial distribution of the new clone token;
-    ///  if the block is zero than the actual block, the current block is used
-    /// @param _transfersEnabled True if transfers are allowed in the clone
-    /// @return The address of the new MiniMeToken Contract
-    function createCloneToken(
-        string _cloneTokenName,
-        uint8 _cloneDecimalUnits,
-        string _cloneTokenSymbol,
-        uint _snapshotBlock,
-        bool _transfersEnabled
-        ) public returns(address) {
-        if (_snapshotBlock == 0) _snapshotBlock = block.number;
-        MiniMeToken cloneToken = tokenFactory.createCloneToken(
-            this,
-            _snapshotBlock,
-            _cloneTokenName,
-            _cloneDecimalUnits,
-            _cloneTokenSymbol,
-            _transfersEnabled
-            );
-
-        cloneToken.changeController(msg.sender);
-
-        // An event to make the token easy to find on the blockchain
-        NewCloneToken(address(cloneToken), _snapshotBlock);
-        return address(cloneToken);
-    }
-
-////////////////
 // Generate and destroy tokens
 ////////////////
 
@@ -511,54 +465,10 @@ contract MiniMeToken is Controlled {
 ////////////////
     event ClaimedTokens(address indexed _token, address indexed _controller, uint _amount);
     event Transfer(address indexed _from, address indexed _to, uint256 _amount);
-    event NewCloneToken(address indexed _cloneToken, uint _snapshotBlock);
     event Approval(
         address indexed _owner,
         address indexed _spender,
         uint256 _amount
         );
 
-}
-
-
-////////////////
-// MiniMeTokenFactory
-////////////////
-
-/// @dev This contract is used to generate clone contracts from a contract.
-///  In solidity this is the way to create a contract from a contract of the
-///  same class
-contract MiniMeTokenFactory {
-
-    /// @notice Update the DApp by creating a new token with new functionalities
-    ///  the msg.sender becomes the controller of this clone token
-    /// @param _parentToken Address of the token being cloned
-    /// @param _snapshotBlock Block of the parent token that will
-    ///  determine the initial distribution of the clone token
-    /// @param _tokenName Name of the new token
-    /// @param _decimalUnits Number of decimals of the new token
-    /// @param _tokenSymbol Token Symbol for the new token
-    /// @param _transfersEnabled If true, tokens will be able to be transferred
-    /// @return The address of the new token contract
-    function createCloneToken(
-        address _parentToken,
-        uint _snapshotBlock,
-        string _tokenName,
-        uint8 _decimalUnits,
-        string _tokenSymbol,
-        bool _transfersEnabled
-    ) public returns (MiniMeToken) {
-        MiniMeToken newToken = new MiniMeToken(
-            this,
-            _parentToken,
-            _snapshotBlock,
-            _tokenName,
-            _decimalUnits,
-            _tokenSymbol,
-            _transfersEnabled
-            );
-
-        newToken.changeController(msg.sender);
-        return newToken;
-    }
 }
