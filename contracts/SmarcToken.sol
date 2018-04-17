@@ -23,7 +23,7 @@ import "./Ownable.sol";
 contract SmarcToken is ERC677, Ownable {
 
     // mapping for locking certain addresses
-    mapping(address => uint256) lockups;
+    mapping(address => uint256) public lockups;
 
     // burnable address
     address public burnable;
